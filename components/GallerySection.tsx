@@ -4,17 +4,13 @@ import { galleryItems } from "@/lib/gallery-data";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export function GallerySection() {
-  const [lightbox, setLightbox] = useState<{
-    src: string;
-    caption: string;
-    credit: string;
-    alt: string;
-  } | null>(null);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   const closeRef = useRef<HTMLButtonElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const close = useCallback(() => {
-    setLightbox(null);
+    setLightboxSrc(null);
     document.body.style.overflow = "";
   }, []);
 
@@ -27,7 +23,7 @@ export function GallerySection() {
   }, [close]);
 
   useEffect(() => {
-    const nodes = document.querySelectorAll<HTMLButtonElement>(".gallery-item.reveal");
+    const nodes = document.querySelectorAll<HTMLButtonElement>(".gallery-card.reveal");
     if (!nodes.length || typeof IntersectionObserver === "undefined") {
       nodes.forEach((n) => n.classList.add("is-visible"));
       return undefined;
@@ -39,61 +35,97 @@ export function GallerySection() {
           if (e.isIntersecting) e.target.classList.add("is-visible");
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -30px 0px" }
+      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" }
     );
     nodes.forEach((n) => obs.observe(n));
     return () => obs.disconnect();
   }, []);
 
   useEffect(() => {
-    if (lightbox) {
+    if (lightboxSrc) {
       document.body.style.overflow = "hidden";
       closeRef.current?.focus();
     }
-  }, [lightbox]);
+  }, [lightboxSrc]);
+
+  const scrollByDir = useCallback((dir: -1 | 1) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>(".gallery-card-wrap");
+    const w = card?.offsetWidth ?? 300;
+    el.scrollBy({ left: dir * (w + 20), behavior: "smooth" });
+  }, []);
 
   return (
     <>
-      <section className="section section--tint" id="gallery" aria-labelledby="gallery-title">
+      <section className="section section--tint section--gallery" id="gallery" aria-labelledby="gallery-title">
         <div className="container">
           <div className="section-head">
             <h2 id="gallery-title" className="section-title">
               Gallery
             </h2>
             <p className="section-sub">
-              Scenes of Telangana &amp; Bengal that inspire our work. Images are from{" "}
-              <a href="https://commons.wikimedia.org/" rel="noopener noreferrer" target="_blank">
-                Wikimedia Commons
-              </a>{" "}
-              (free to reuse with credit—see footer).
+              Moments from our cultural programs and celebrations across Telangana.
             </p>
           </div>
-          <ul className="gallery-grid" id="gallery-grid">
-            {galleryItems.map((item) => (
-              <li key={item.fullSrc}>
-                <button
-                  type="button"
-                  className="gallery-item reveal"
-                  onClick={() =>
-                    setLightbox({
-                      src: item.fullSrc,
-                      caption: item.caption,
-                      credit: item.credit,
-                      alt: item.alt,
-                    })
-                  }
+        </div>
+
+        <div className="gallery-carousel" aria-label="Image gallery">
+          <button
+            type="button"
+            className="gallery-nav gallery-nav--prev"
+            aria-label="Scroll gallery left"
+            onClick={() => scrollByDir(-1)}
+          />
+          <button
+            type="button"
+            className="gallery-nav gallery-nav--next"
+            aria-label="Scroll gallery right"
+            onClick={() => scrollByDir(1)}
+          />
+
+          <div className="gallery-scroll-fade gallery-scroll-fade--left" aria-hidden />
+          <div className="gallery-scroll-fade gallery-scroll-fade--right" aria-hidden />
+
+          <div ref={scrollRef} className="gallery-scroll-shell" tabIndex={0}>
+            <ul className="gallery-rail">
+              {galleryItems.map((item, i) => (
+                <li
+                  key={item.src}
+                  className="gallery-card-wrap"
+                  style={{ "--gallery-i": i } as React.CSSProperties}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.thumbSrc} alt={item.alt} width={480} height={360} loading="lazy" />
-                  <span className="gallery-caption">{item.label}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <button
+                    type="button"
+                    className="gallery-card gallery-item reveal"
+                    aria-label="View full size image"
+                    onClick={() => setLightboxSrc(item.src)}
+                  >
+                    <span className="gallery-card-media">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.src}
+                        alt=""
+                        width={480}
+                        height={360}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="gallery-scroll-hint">
+            <span className="gallery-scroll-hint-dot" aria-hidden />
+            Scroll or swipe to explore
+          </p>
         </div>
       </section>
 
-      {lightbox ? (
+      {lightboxSrc ? (
         <div
           className="lightbox"
           role="dialog"
@@ -107,9 +139,7 @@ export function GallerySection() {
             &times;
           </button>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="lightbox-img" src={lightbox.src} alt={lightbox.alt} />
-          <p className="lightbox-caption">{lightbox.caption}</p>
-          <p className="lightbox-credit">{lightbox.credit}</p>
+          <img className="lightbox-img" src={lightboxSrc} alt="Gallery image" />
         </div>
       ) : null}
     </>

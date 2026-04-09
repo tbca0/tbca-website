@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
+import "./tbca.css";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -18,7 +19,6 @@ export const metadata: Metadata = {
   title: "TBCA — Telangana Bengali Cultural Association",
   description:
     "Telangana Bengali Cultural Association (TBCA) — promoting Bengali language, festivals, and community in Telangana. Connecting people through culture.",
-  icons: [{ url: "/tbca-logo.jpeg", type: "image/jpeg" }],
 };
 
 export default function RootLayout({

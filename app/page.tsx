@@ -1,3 +1,4 @@
+import { ContactMap } from "@/components/ContactMap";
 import { GallerySection } from "@/components/GallerySection";
 import { HeroCounter } from "@/components/HeroCounter";
 import { JoinForm } from "@/components/JoinForm";
@@ -65,7 +66,7 @@ export default function Home() {
             <div className="hero-visual" aria-hidden>
               <div className="hero-card hero-card--primary">
                 <span className="hero-card-badge">Cultural programs</span>
-                <p>Pujo, music, theatre, debates, and workshops across the year.</p>
+                <p>Puja, music, theatre, debates, and workshops across the year.</p>
               </div>
               <div className="hero-card hero-card--accent">
                 <span className="hero-card-badge">Together</span>
@@ -175,7 +176,7 @@ export default function Home() {
                   Oct 2026
                 </time>
                 <h3>Durga Puja &amp; cultural fair</h3>
-                <p>Pujo, anjali, dhak, prasad, and open stalls for handicrafts and books.</p>
+                <p>Puja, anjali, dhak, prasad, and open stalls for handicrafts and books.</p>
                 <span className="event-tag">Flagship</span>
               </RevealArticle>
               <RevealArticle className="event-card">
@@ -208,36 +209,29 @@ export default function Home() {
               <h2 id="contact-title" className="section-title">
                 Contact
               </h2>
-              <p>Replace the placeholders below with your official phone, email, and registered address.</p>
+              <p>Reach us by email, phone, or at the address below.</p>
               <address className="contact-card">
                 <p>
                   <strong>Telangana Bengali Cultural Association</strong>
                 </p>
-                <p>Hyderabad, Telangana, India</p>
+                <p>
+                  30-265/20/C7/301, Flat No. 301
+                  <br />
+                  Sri Sai Mitra Marvel
+                  <br />
+                  Officers Colony, DR A S Rao Nagar
+                  <br />
+                  Secunderabad, Hyderabad, Telangana&nbsp;–&nbsp;500062
+                </p>
                 <p>
                   <a href="tel:+910000000000">+91-00000-00000</a>
                 </p>
                 <p>
-                  <a href="mailto:hello@tbca.example.org">hello@tbca.example.org</a>
+                  <a href="mailto:info@tbca.in">info@tbca.in</a>
                 </p>
               </address>
             </div>
-            <div className="map-wrap" aria-label="Map placeholder">
-              <iframe
-                title="Hyderabad map placeholder"
-                className="map-iframe"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=78.36%2C17.35%2C78.55%2C17.46&amp;layer=mapnik"
-              />
-              <p className="map-caption">
-                Map data ©{" "}
-                <a href="https://www.openstreetmap.org/" rel="noopener noreferrer" target="_blank">
-                  OpenStreetMap
-                </a>{" "}
-                contributors
-              </p>
-            </div>
+            <ContactMap />
           </div>
         </section>
       </main>
@@ -255,13 +249,10 @@ export default function Home() {
           </div>
           <nav className="footer-nav" aria-label="Footer">
             <Link href="#about">About</Link>
-            <Link href="#gallery">Gallery credit</Link>
+            <Link href="#gallery">Gallery</Link>
             <Link href="#contact">Contact</Link>
           </nav>
-          <p className="footer-copy">
-            © {year} Telangana Bengali Cultural Association. Gallery photographs are credited per lightbox;
-            sources are Wikimedia Commons.
-          </p>
+          <p className="footer-copy">© {year} Telangana Bengali Cultural Association.</p>
         </div>
       </footer>
     </>

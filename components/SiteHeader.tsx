@@ -33,7 +33,12 @@ export function SiteHeader() {
   return (
     <header className="site-header" id="top">
       <div className="header-inner">
-        <Link className="brand" href="#top" aria-label="TBCA home" onClick={close}>
+        <Link
+          className="brand"
+          href="#top"
+          aria-label="Telangana Bengali Cultural Association home"
+          onClick={close}
+        >
           <Image
             src="/tbca-logo.jpeg"
             alt="Telangana Bengali Cultural Association logo"
@@ -43,8 +48,7 @@ export function SiteHeader() {
             priority
           />
           <span className="brand-text">
-            <span className="brand-name">TBCA</span>
-            <span className="brand-tag">Telangana Bengali Cultural Association</span>
+            <span className="brand-name">TELANGANA BENGALI CULTURAL ASSOCIATION</span>
           </span>
         </Link>
         <button

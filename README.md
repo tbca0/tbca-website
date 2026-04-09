@@ -20,16 +20,26 @@ The production deployment is hosted on **[Vercel](https://vercel.com/)**.
 | Node.js | 20.x or 22.x LTS | [nodejs.org](https://nodejs.org/) |
 | npm | 10+ | Comes with Node |
 
-No environment variables are required for the current static/demo features (gallery uses public Wikimedia URLs; the interest form is front-end only until you connect a backend).
+### Google Sheet (Join form)
 
-### Optional environment variables (future)
+The **Submit interest** form posts to `/api/join`, which forwards rows to Google Sheets via **Google Apps Script**.
 
-If you add analytics, a contact API, or CMS later, define variables in Vercel (**Settings → Environment Variables**) and locally in `.env.local` (never commit secrets). Example pattern:
+1. Create a Sheet and open **Extensions → Apps Script**.
+2. Paste the code from [`scripts/google-sheets-apps-script.gs`](scripts/google-sheets-apps-script.gs).
+3. In **Project settings → Script properties**, add `SECRET` (a long random string).
+4. **Deploy → New deployment → Web app**: execute as **Me**, access **Anyone**.
+5. Copy the Web App URL and Script secret into Vercel (or `.env.local`):
 
-```bash
-# .env.local (example — not used until you wire features)
-# NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
-```
+| Variable | Description |
+|----------|-------------|
+| `GOOGLE_SHEET_WEB_APP_URL` | Apps Script Web App URL |
+| `GOOGLE_SHEET_SECRET` | Same value as Script property `SECRET` |
+
+See [`.env.example`](.env.example). Without these, the form shows a configuration error.
+
+### Other environment variables
+
+Define any extra keys in Vercel (**Settings → Environment Variables**) and locally in `.env.local` (never commit secrets).
 
 ## Local development
 
@@ -70,10 +80,10 @@ To update production: push to the connected branch on GitHub; Vercel rebuilds au
 
 ## Content and compliance
 
-- Gallery images are loaded from [Wikimedia Commons](https://commons.wikimedia.org/) with credits shown in the lightbox; replace or extend with your own event photos as needed.
+- Gallery images live in `public/gallary/`; update `lib/gallery-data.ts` if you add or rename files.
 - Update **Contact** placeholders (phone, email, address) in `app/page.tsx` when you have final details.
-- Connect the **Join** form to your email service, CRM, or API when ready (currently a demo message only).
+- The **Join** form appends rows to a Google Sheet when `GOOGLE_SHEET_WEB_APP_URL` and `GOOGLE_SHEET_SECRET` are set (see above).
 
 ## License
 
-Content and branding © Telangana Bengali Cultural Association unless otherwise noted. Third-party gallery images remain under their respective Commons licenses.
+Content and branding © Telangana Bengali Cultural Association unless otherwise noted.
