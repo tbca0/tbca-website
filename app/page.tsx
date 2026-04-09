@@ -1,65 +1,269 @@
+import { GallerySection } from "@/components/GallerySection";
+import { HeroCounter } from "@/components/HeroCounter";
+import { JoinForm } from "@/components/JoinForm";
+import { ProgramsAccordion } from "@/components/ProgramsAccordion";
+import { RevealArticle, RevealLi } from "@/components/Reveal";
+import { SiteHeader } from "@/components/SiteHeader";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
+  const year = new Date().getFullYear();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <Link className="skip-link" href="#main">
+        Skip to content
+      </Link>
+
+      <SiteHeader />
+
+      <main id="main">
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-bg" aria-hidden />
+          <div className="container hero-grid">
+            <div className="hero-copy">
+              <p className="eyebrow">Hyderabad &amp; beyond · Telangana</p>
+              <h1 id="hero-title" className="hero-title">
+                Bengali culture, alive and <span className="text-gradient">at home</span> in Telangana
+              </h1>
+              <p className="hero-lead">
+                We bring together families, artists, and enthusiasts to celebrate language, festivals, music,
+                and community—building a bridge between Bengal and Telangana.
+              </p>
+              <p className="hero-slogan">
+                <em>Connecting people through culture</em>
+              </p>
+              <div className="hero-actions">
+                <Link href="#join" className="btn btn-primary">
+                  Become a member
+                </Link>
+                <Link href="#programs" className="btn btn-ghost">
+                  What we do
+                </Link>
+              </div>
+              <dl className="hero-stats" aria-label="Quick facts">
+                <div className="stat">
+                  <dt className="stat-label">Focus</dt>
+                  <dd className="stat-value">
+                    <HeroCounter target={3} /> languages
+                  </dd>
+                  <dd className="stat-hint">English · বাংলা · తెలుగు</dd>
+                </div>
+                <div className="stat">
+                  <dt className="stat-label">Community</dt>
+                  <dd className="stat-value">All ages</dd>
+                  <dd className="stat-hint">Families &amp; youth</dd>
+                </div>
+                <div className="stat">
+                  <dt className="stat-label">Region</dt>
+                  <dd className="stat-value">Telangana</dd>
+                  <dd className="stat-hint">State-wide reach</dd>
+                </div>
+              </dl>
+            </div>
+            <div className="hero-visual" aria-hidden>
+              <div className="hero-card hero-card--primary">
+                <span className="hero-card-badge">Cultural programs</span>
+                <p>Pujo, music, theatre, debates, and workshops across the year.</p>
+              </div>
+              <div className="hero-card hero-card--accent">
+                <span className="hero-card-badge">Together</span>
+                <p>A welcoming space for Bengalis and friends of Bengal in Telangana.</p>
+              </div>
+              <div className="hero-orb" />
+            </div>
+          </div>
+        </section>
+
+        <section className="section section--tint" id="about" aria-labelledby="about-title">
+          <div className="container narrow">
+            <h2 id="about-title" className="section-title">
+              About TBCA
+            </h2>
+            <p className="lead">
+              <strong>Telangana Bengali Cultural Association (TBCA)</strong> is a non-profit initiative
+              dedicated to preserving Bengali heritage while embracing our life in Telangana. Like sister
+              associations that have enriched Hyderabad’s cultural map—such as the long-running community
+              work reflected on{" "}
+              <a href="https://cyberabadbengalis.com/" rel="noopener noreferrer" target="_blank">
+                Cyberabad Bangali Association
+              </a>
+              —we focus on grassroots participation, transparent volunteering, and programs that anyone can
+              join.
+            </p>
+            <p>
+              From literary adda to children’s language labs, from Durga Puja to Rabindra Jayanti and regional
+              collaborations with Telugu friends and neighbours, TBCA is a home for culture without borders.
+            </p>
+          </div>
+        </section>
+
+        <section className="section" id="mission" aria-labelledby="mission-title">
+          <div className="container">
+            <div className="section-head">
+              <h2 id="mission-title" className="section-title">
+                How we help Bengali culture in Telangana
+              </h2>
+              <p className="section-sub">Practical, inclusive, and rooted in community.</p>
+            </div>
+            <ul className="feature-grid">
+              <RevealLi className="feature-card">
+                <div className="feature-icon" aria-hidden>
+                  🪔
+                </div>
+                <h3>Festivals &amp; rituals</h3>
+                <p>
+                  Organizing and supporting Durga Puja, Kali Puja, Saraswati Puja, Pohela Boishakh, and
+                  seasonal celebrations with authentic traditions and open doors for newcomers.
+                </p>
+              </RevealLi>
+              <RevealLi className="feature-card">
+                <div className="feature-icon" aria-hidden>
+                  📖
+                </div>
+                <h3>Language &amp; literature</h3>
+                <p>
+                  Reading circles, script workshops for children, and bridges between Bengali and Telugu
+                  literary cultures.
+                </p>
+              </RevealLi>
+              <RevealLi className="feature-card">
+                <div className="feature-icon" aria-hidden>
+                  🎭
+                </div>
+                <h3>Music &amp; performing arts</h3>
+                <p>Rabindra Sangeet, Nazrulgeeti, drama, dance, and collaborations with local artists.</p>
+              </RevealLi>
+              <RevealLi className="feature-card">
+                <div className="feature-icon" aria-hidden>
+                  🤝
+                </div>
+                <h3>Community care</h3>
+                <p>
+                  Volunteer networking, newcomer support, senior engagement, and civic participation as
+                  responsible residents of Telangana.
+                </p>
+              </RevealLi>
+            </ul>
+          </div>
+        </section>
+
+        <section className="section section--dark" id="programs" aria-labelledby="programs-title">
+          <div className="container">
+            <div className="section-head section-head--light">
+              <h2 id="programs-title" className="section-title">
+                Programs you can explore
+              </h2>
+              <p className="section-sub">Tap a card—details expand on mobile and desktop.</p>
+            </div>
+            <ProgramsAccordion />
+          </div>
+        </section>
+
+        <section className="section" id="events" aria-labelledby="events-title">
+          <div className="container">
+            <div className="section-head">
+              <h2 id="events-title" className="section-title">
+                Upcoming highlights
+              </h2>
+              <p className="section-sub">Sample calendar—replace dates with your real schedule.</p>
+            </div>
+            <div className="event-cards">
+              <RevealArticle className="event-card">
+                <time className="event-date" dateTime="2026-10">
+                  Oct 2026
+                </time>
+                <h3>Durga Puja &amp; cultural fair</h3>
+                <p>Pujo, anjali, dhak, prasad, and open stalls for handicrafts and books.</p>
+                <span className="event-tag">Flagship</span>
+              </RevealArticle>
+              <RevealArticle className="event-card">
+                <time className="event-date" dateTime="2026-05">
+                  May 2026
+                </time>
+                <h3>Rabindra Jayanti</h3>
+                <p>Evening of songs, recitation, and talks on Gurudev’s vision.</p>
+                <span className="event-tag">Heritage</span>
+              </RevealArticle>
+              <RevealArticle className="event-card">
+                <time className="event-date" dateTime="2026-04">
+                  Apr 2026
+                </time>
+                <h3>Pohela Boishakh</h3>
+                <p>Nobo Borsho procession, traditional food, and children’s fancy dress.</p>
+                <span className="event-tag">Community</span>
+              </RevealArticle>
+            </div>
+          </div>
+        </section>
+
+        <GallerySection />
+
+        <JoinForm />
+
+        <section className="section" id="contact" aria-labelledby="contact-title">
+          <div className="container contact-grid">
+            <div>
+              <h2 id="contact-title" className="section-title">
+                Contact
+              </h2>
+              <p>Replace the placeholders below with your official phone, email, and registered address.</p>
+              <address className="contact-card">
+                <p>
+                  <strong>Telangana Bengali Cultural Association</strong>
+                </p>
+                <p>Hyderabad, Telangana, India</p>
+                <p>
+                  <a href="tel:+910000000000">+91-00000-00000</a>
+                </p>
+                <p>
+                  <a href="mailto:hello@tbca.example.org">hello@tbca.example.org</a>
+                </p>
+              </address>
+            </div>
+            <div className="map-wrap" aria-label="Map placeholder">
+              <iframe
+                title="Hyderabad map placeholder"
+                className="map-iframe"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=78.36%2C17.35%2C78.55%2C17.46&amp;layer=mapnik"
+              />
+              <p className="map-caption">
+                Map data ©{" "}
+                <a href="https://www.openstreetmap.org/" rel="noopener noreferrer" target="_blank">
+                  OpenStreetMap
+                </a>{" "}
+                contributors
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <div className="container footer-grid">
+          <div className="footer-brand">
+            <Image src="/tbca-logo.jpeg" alt="" width={48} height={48} className="footer-logo" />
+            <div>
+              <strong>TBCA</strong>
+              <p className="footer-slogan">
+                <em>Connecting people through culture</em>
+              </p>
+            </div>
+          </div>
+          <nav className="footer-nav" aria-label="Footer">
+            <Link href="#about">About</Link>
+            <Link href="#gallery">Gallery credit</Link>
+            <Link href="#contact">Contact</Link>
+          </nav>
+          <p className="footer-copy">
+            © {year} Telangana Bengali Cultural Association. Gallery photographs are credited per lightbox;
+            sources are Wikimedia Commons.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </footer>
+    </>
   );
 }

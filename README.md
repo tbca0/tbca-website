@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TBCA Website
 
-## Getting Started
+Official marketing site for **Telangana Bengali Cultural Association (TBCA)** — built with [Next.js](https://nextjs.org/) (App Router) and TypeScript.
 
-First, run the development server:
+## Live site
+
+The production deployment is hosted on **[Vercel](https://vercel.com/)**.
+
+- After connecting this repository to Vercel, each push to the default branch triggers a new deployment.
+- Custom domain (optional): add it in the Vercel project under **Settings → Domains** and follow the DNS instructions Vercel provides.
+
+## Repository
+
+- **GitHub:** [github.com/tbca0/tbca-website](https://github.com/tbca0/tbca-website)
+
+## Requirements
+
+| Tool | Version (approx.) | Notes |
+|------|-------------------|--------|
+| Node.js | 20.x or 22.x LTS | [nodejs.org](https://nodejs.org/) |
+| npm | 10+ | Comes with Node |
+
+No environment variables are required for the current static/demo features (gallery uses public Wikimedia URLs; the interest form is front-end only until you connect a backend).
+
+### Optional environment variables (future)
+
+If you add analytics, a contact API, or CMS later, define variables in Vercel (**Settings → Environment Variables**) and locally in `.env.local` (never commit secrets). Example pattern:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# .env.local (example — not used until you wire features)
+# NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+git clone https://github.com/tbca0/tbca-website.git
+cd tbca-website
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Run production server (after `build`) |
+| `npm run lint` | ESLint |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploying on Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Sign in at [vercel.com](https://vercel.com/) (GitHub account recommended).
+2. **Add New Project** → Import **tbca0/tbca-website**.
+3. Framework preset: **Next.js** (auto-detected). Root directory: **.** (repository root is this app).
+4. Build command: `npm run build` (default). Output: Next.js default (no static export required).
+5. Deploy. Vercel assigns a URL like `tbca-website-xxxxx.vercel.app`.
 
-## Deploy on Vercel
+To update production: push to the connected branch on GitHub; Vercel rebuilds automatically.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project layout (high level)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/` — App Router pages, layout, global styles (`globals.css`, `tbca.css`)
+- `components/` — Client components (navigation, gallery lightbox, forms, animations)
+- `lib/` — Shared data (e.g. gallery image metadata)
+- `public/` — Static assets (e.g. `tbca-logo.jpeg`)
+
+## Content and compliance
+
+- Gallery images are loaded from [Wikimedia Commons](https://commons.wikimedia.org/) with credits shown in the lightbox; replace or extend with your own event photos as needed.
+- Update **Contact** placeholders (phone, email, address) in `app/page.tsx` when you have final details.
+- Connect the **Join** form to your email service, CRM, or API when ready (currently a demo message only).
+
+## License
+
+Content and branding © Telangana Bengali Cultural Association unless otherwise noted. Third-party gallery images remain under their respective Commons licenses.
