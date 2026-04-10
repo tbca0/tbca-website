@@ -86,10 +86,7 @@ export default function Home() {
               <strong>Telangana Bengali Cultural Association (TBCA)</strong> is a non-profit initiative
               dedicated to preserving Bengali heritage while embracing our life in Telangana. Like sister
               associations that have enriched Hyderabad’s cultural map—such as the long-running community
-              work reflected on{" "}
-              <a href="https://cyberabadbengalis.com/" rel="noopener noreferrer" target="_blank">
-                Cyberabad Bangali Association
-              </a>
+              work reflected in Telangana Bengali Cultural Association.
               —we focus on grassroots participation, transparent volunteering, and programs that anyone can
               join.
             </p>
@@ -172,12 +169,12 @@ export default function Home() {
             </div>
             <div className="event-cards">
               <RevealArticle className="event-card">
-                <time className="event-date" dateTime="2026-10">
-                  Oct 2026
+                <time className="event-date" dateTime="2026-04">
+                  Apr 2026
                 </time>
-                <h3>Durga Puja &amp; cultural fair</h3>
-                <p>Puja, anjali, dhak, prasad, and open stalls for handicrafts and books.</p>
-                <span className="event-tag">Flagship</span>
+                <h3>Pohela Boishakh</h3>
+                <p>Nobo Borsho procession, traditional food, and children’s fancy dress.</p>
+                <span className="event-tag">Community</span>
               </RevealArticle>
               <RevealArticle className="event-card">
                 <time className="event-date" dateTime="2026-05">
@@ -188,12 +185,12 @@ export default function Home() {
                 <span className="event-tag">Heritage</span>
               </RevealArticle>
               <RevealArticle className="event-card">
-                <time className="event-date" dateTime="2026-04">
-                  Apr 2026
+                <time className="event-date" dateTime="2026-10">
+                  Oct 2026
                 </time>
-                <h3>Pohela Boishakh</h3>
-                <p>Nobo Borsho procession, traditional food, and children’s fancy dress.</p>
-                <span className="event-tag">Community</span>
+                <h3>Durga Puja &amp; cultural fair</h3>
+                <p>Puja, anjali, dhak, prasad, and open stalls for handicrafts and books.</p>
+                <span className="event-tag">Flagship</span>
               </RevealArticle>
             </div>
           </div>
