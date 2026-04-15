@@ -794,6 +794,149 @@ a:hover {
   color: var(--color-orange);
 }
 
+.upcoming-video-block {
+  margin: 0 auto 28px;
+  max-width: 960px;
+}
+
+.upcoming-video-shell {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 14px;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.upcoming-video-frame {
+  position: relative;
+  width: 100%;
+  border-radius: calc(var(--radius-md) + 2px);
+  overflow: hidden;
+  background: #0f1729;
+  isolation: isolate;
+}
+
+.upcoming-event-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(72vh, 860px);
+  object-fit: contain;
+  background: #0f1729;
+}
+
+.upcoming-video-pattern {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .upcoming-video-shell {
+    padding: 18px;
+    min-height: 620px;
+    align-items: center;
+  }
+
+  .upcoming-video-pattern {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.42;
+    z-index: 0;
+  }
+
+  .upcoming-video-pattern .flower-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 720px;
+    height: 720px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px dashed rgba(194, 24, 122, 0.52);
+    filter: drop-shadow(0 0 18px rgba(194, 24, 122, 0.18));
+    animation: flower-spin 26s linear infinite;
+  }
+
+  .upcoming-video-pattern .flower-ring--inner {
+    width: 500px;
+    height: 500px;
+    border-color: rgba(21, 101, 192, 0.58);
+    animation-direction: reverse;
+    animation-duration: 19s;
+  }
+
+  .upcoming-video-pattern .flower-rosette {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 620px;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background:
+      repeating-conic-gradient(
+        from 0deg,
+        rgba(194, 24, 122, 0.2) 0deg 10deg,
+        transparent 10deg 20deg
+      ),
+      radial-gradient(
+        circle at center,
+        transparent 0 33%,
+        rgba(21, 101, 192, 0.22) 33% 38%,
+        transparent 38% 100%
+      );
+    mask: radial-gradient(circle at center, transparent 0 22%, #000 22% 100%);
+    animation: flower-spin-reverse 30s linear infinite;
+  }
+
+  .upcoming-video-frame {
+    z-index: 1;
+    box-shadow: 0 18px 48px rgba(15, 23, 41, 0.32);
+  }
+
+  .upcoming-video-shell.is-portrait .upcoming-video-frame {
+    width: min(420px, 100%);
+  }
+
+  .upcoming-video-shell:not(.is-portrait) .upcoming-video-frame {
+    width: min(920px, 100%);
+  }
+
+  .upcoming-video-shell.is-portrait .upcoming-event-video {
+    max-height: 680px;
+  }
+}
+
+@keyframes flower-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes flower-spin-reverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-video-pattern .flower-ring,
+  .upcoming-video-pattern .flower-rosette {
+    animation: none;
+  }
+}
+
 /* Gallery - horizontal scroll cards */
 .section--gallery {
   overflow: hidden;

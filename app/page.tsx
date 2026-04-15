@@ -5,6 +5,7 @@ import { JoinForm } from "@/components/JoinForm";
 import { ProgramsAccordion } from "@/components/ProgramsAccordion";
 import { RevealArticle, RevealLi } from "@/components/Reveal";
 import { SiteHeader } from "@/components/SiteHeader";
+import UpcomingEventVideo from "@/components/UpcomingEventVideo";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -167,6 +168,7 @@ export default function Home() {
               </h2>
               <p className="section-sub">Sample calendar—replace dates with your real schedule.</p>
             </div>
+            <UpcomingEventVideo />
             <div className="event-cards">
               <RevealArticle className="event-card">
                 <time className="event-date" dateTime="2026-04">
