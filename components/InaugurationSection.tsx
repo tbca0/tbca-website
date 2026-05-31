@@ -37,32 +37,6 @@ const inaugurationGallery = [
   "/gallery/inauguration/inauguration-day-22.jpg",
 ];
 
-const inaugurationFlowLabels = [
-  "Welcome setup",
-  "Guests arrive",
-  "Lamp lighting ceremony",
-  "Opening blessing",
-  "Committee welcome",
-  "Stage introduction",
-  "Cultural performance",
-  "Musical tribute",
-  "Solo performance",
-  "Dance celebration",
-  "Festive performance",
-  "Guest felicitation",
-  "Honouring members",
-  "Family recognition",
-  "Volunteer appreciation",
-  "Children's moment",
-  "Women's group celebration",
-  "Traditional group portrait",
-  "Community smiles",
-  "Refreshments",
-  "Shared celebration",
-  "Photo booth memory",
-  "Grand community frame",
-];
-
 export function InaugurationSection() {
   const [showGallery, setShowGallery] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -89,7 +63,9 @@ export function InaugurationSection() {
     <section
       id="inauguration"
       aria-labelledby="inauguration-title"
-      className={`relative isolate overflow-hidden bg-[#fff8f1] py-20 sm:py-24 ${showGallery ? "gallery-active-section" : ""}`}
+      className={`relative isolate overflow-hidden bg-[#fff8f1] py-20 sm:py-24 ${
+        showGallery ? "gallery-active-section" : ""
+      }`}
     >
       {!showGallery ? (
         <div
@@ -102,6 +78,7 @@ export function InaugurationSection() {
           aria-hidden="true"
         />
       ) : null}
+
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_20%,rgba(249,115,22,0.24),transparent_34%),radial-gradient(circle_at_82%_18%,rgba(59,130,246,0.16),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.92),rgba(255,247,237,0.97))]" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -125,16 +102,30 @@ export function InaugurationSection() {
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <div className="rounded-3xl bg-white/90 p-5 shadow-xl shadow-orange-100/80 ring-1 ring-orange-100 backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Moment</p>
-                <p className="mt-2 text-lg font-extrabold text-slate-950">Grand launch</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-600">
+                  Moment
+                </p>
+                <p className="mt-2 text-lg font-extrabold text-slate-950">
+                  Grand launch
+                </p>
               </div>
+
               <div className="rounded-3xl bg-white/90 p-5 shadow-xl shadow-orange-100/80 ring-1 ring-orange-100 backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-widest text-orange-600">People</p>
-                <p className="mt-2 text-lg font-extrabold text-slate-950">Members & families</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-600">
+                  People
+                </p>
+                <p className="mt-2 text-lg font-extrabold text-slate-950">
+                  Members & families
+                </p>
               </div>
+
               <div className="rounded-3xl bg-white/90 p-5 shadow-xl shadow-orange-100/80 ring-1 ring-orange-100 backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Theme</p>
-                <p className="mt-2 text-lg font-extrabold text-slate-950">Culture & unity</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-600">
+                  Theme
+                </p>
+                <p className="mt-2 text-lg font-extrabold text-slate-950">
+                  Culture & unity
+                </p>
               </div>
             </div>
 
@@ -169,7 +160,7 @@ export function InaugurationSection() {
               </button>
 
               <Link
-                href="#join" 
+                href="#join"
                 className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-widest text-slate-800 shadow-lg ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:text-orange-600"
               >
                 Join TBCA
@@ -178,8 +169,14 @@ export function InaugurationSection() {
           </div>
 
           <div className="relative">
-            <div className="absolute -left-6 -top-6 h-32 w-32 rounded-full bg-orange-300/50 blur-2xl" aria-hidden="true" />
-            <div className="absolute -bottom-8 -right-6 h-40 w-40 rounded-full bg-blue-300/35 blur-2xl" aria-hidden="true" />
+            <div
+              className="absolute -left-6 -top-6 h-32 w-32 rounded-full bg-orange-300/50 blur-2xl"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -bottom-8 -right-6 h-40 w-40 rounded-full bg-blue-300/35 blur-2xl"
+              aria-hidden="true"
+            />
 
             <div className="relative overflow-hidden rounded-[2.4rem] bg-white p-3 shadow-2xl shadow-slate-950/20 ring-1 ring-white/80">
               <Image
@@ -223,7 +220,8 @@ export function InaugurationSection() {
                   Club opening gallery
                 </h3>
                 <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-600 sm:text-base">
-                  Follow the inauguration day in sequence — from welcome setup to the final community photograph.
+                  Follow the inauguration day in sequence — from welcome setup to the final community
+                  photograph.
                 </p>
               </div>
 
@@ -241,6 +239,7 @@ export function InaugurationSection() {
                 className="h-full w-full object-cover object-center"
                 priority={activeSlide === 0}
               />
+
               <button
                 type="button"
                 onClick={goToPrevious}
@@ -259,15 +258,11 @@ export function InaugurationSection() {
                 ›
               </button>
 
-              <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-4">
-                <div className="rounded-2xl bg-white/90 px-4 py-3 text-slate-950 shadow-lg backdrop-blur">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-orange-700 sm:text-xs">
-                    TBCA inauguration
-                  </p>
-                  <h4 className="mt-1 text-base font-black sm:text-xl">
-                    {inaugurationFlowLabels[activeSlide] ?? `Photo ${activeSlide + 1}`}
-                  </h4>
-                </div>
+              <div className="absolute bottom-4 right-4 flex items-center gap-3">
+                <span className="rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-slate-950 shadow-lg backdrop-blur">
+                  {activeSlide + 1}/{totalSlides}
+                </span>
+
                 <button
                   type="button"
                   onClick={() => setShowGallery(false)}
