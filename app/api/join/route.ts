@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+export const runtime = "nodejs";
+
 type JoinFormPayload = {
   name?: string;
   email?: string;
@@ -32,28 +34,52 @@ async function saveToGoogleSheet(payload: {
 
   if (!url || !secret) {
     console.warn("Google Sheet env variables are missing. Skipping sheet save.");
-    return;
+    return {
+      success: false,
+      skipped: true,
+      error: "Google Sheet env variables missing",
+    };
   }
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      secret,
-      ...payload,
-    }),
-  });
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        secret,
+        ...payload,
+      }),
+    });
 
-  const text = await response.text();
+    const text = await response.text();
 
-  if (!response.ok) {
-    console.error("Google Sheet save failed:", text);
-    throw new Error("Google Sheet save failed");
+    if (!response.ok) {
+      console.error("Google Sheet save failed:", text);
+      return {
+        success: false,
+        skipped: false,
+        error: text || "Google Sheet save failed",
+      };
+    }
+
+    console.log("Google Sheet save response:", text);
+
+    return {
+      success: true,
+      skipped: false,
+      error: "",
+    };
+  } catch (error) {
+    console.error("Google Sheet save error:", error);
+
+    return {
+      success: false,
+      skipped: false,
+      error: "Google Sheet request failed",
+    };
   }
-
-  console.log("Google Sheet save response:", text);
 }
 
 export async function POST(request: Request) {
@@ -67,19 +93,37 @@ export async function POST(request: Request) {
 
     if (!name || !email) {
       return NextResponse.json(
-        { success: false, message: "Name and email are required." },
+        {
+          success: false,
+          message: "Name and email are required.",
+        },
         { status: 400 }
       );
     }
 
     if (!isValidEmail(email)) {
       return NextResponse.json(
-        { success: false, message: "Please enter a valid email address." },
+        {
+          success: false,
+          message: "Please enter a valid email address.",
+        },
         { status: 400 }
       );
     }
 
-    await saveToGoogleSheet({
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.error("SMTP_USER or SMTP_PASS is missing.");
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Mail configuration is missing. Please contact the website admin.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const sheetResult = await saveToGoogleSheet({
       name,
       email,
       interest,
@@ -91,15 +135,21 @@ export async function POST(request: Request) {
     const safeInterest = escapeHtml(interest);
     const safeMessage = escapeHtml(message);
 
+    const smtpPort = Number(process.env.SMTP_PORT || 587);
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: Number(process.env.SMTP_PORT || 465),
-      secure: Number(process.env.SMTP_PORT || 465) === 465,
+      port: smtpPort,
+      secure: smtpPort === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     });
+
+    await transporter.verify();
+
+    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
 
     const userMailHtml = `
       <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:24px;">
@@ -164,27 +214,35 @@ export async function POST(request: Request) {
             ? `<p><strong>Message:</strong> ${safeMessage}</p>`
             : ""
         }
+        ${
+          sheetResult.success
+            ? `<p><strong>Google Sheet:</strong> Saved successfully</p>`
+            : `<p><strong>Google Sheet:</strong> Not saved - ${escapeHtml(
+                sheetResult.error || "Unknown error"
+              )}</p>`
+        }
       </div>
     `;
 
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
-      to: safeEmail,
+      from: `"TBCA" <${fromEmail}>`,
+      to: email,
       subject: "Thank you for joining TBCA",
       html: userMailHtml,
     });
 
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      from: `"TBCA Website" <${fromEmail}>`,
       to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
       subject: "New TBCA Join Form Submission",
       html: adminMailHtml,
-      replyTo: safeEmail,
+      replyTo: email,
     });
 
     return NextResponse.json({
       success: true,
       message: "Thank you for showing interest in Telangana Bengali Cultural Association.",
+      sheetSaved: sheetResult.success,
     });
   } catch (error) {
     console.error("Join form error:", error);
@@ -192,7 +250,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Something went wrong. Please try again or email info@tbca.in.",
+        message: "Mail sending failed. Please check SMTP settings or app password.",
       },
       { status: 500 }
     );

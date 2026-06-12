@@ -14,16 +14,23 @@ export function JoinForm() {
   const [pending, setPending] = useState(false);
 
   return (
-    <section className="section join-strip" id="join" aria-labelledby="join-title">
+    <section
+      className="section join-strip"
+      id="join"
+      aria-labelledby="join-title"
+    >
       <div className="container join-inner">
         <div className="join-copy">
           <h2 id="join-title" className="section-title">
             Join TBCA
           </h2>
+
           <p>
-            Membership and volunteering keep our events affordable and welcoming. Share your skills—stage,
-            sound, design, food safety, youth coaching—or simply show up as a participant.
+            Membership and volunteering keep our events affordable and welcoming.
+            Share your skills—stage, sound, design, food safety, youth
+            coaching—or simply show up as a participant.
           </p>
+
           <ul className="checklist">
             <li>Family-friendly events across Telangana</li>
             <li>Transparent, volunteer-led organizing</li>
@@ -37,6 +44,7 @@ export function JoinForm() {
           noValidate
           onSubmit={async (e) => {
             e.preventDefault();
+
             setStatus("");
             setIsError(false);
 
@@ -61,7 +69,9 @@ export function JoinForm() {
             try {
               const res = await fetch("/api/join", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                },
                 body: JSON.stringify(payload),
               });
 
@@ -78,7 +88,11 @@ export function JoinForm() {
               }
 
               setIsError(false);
-              setStatus(data.message || "Thank you! Your interest has been recorded. We’ll reach out soon.");
+              setStatus(
+                data.message ||
+                  "Thank you! Your interest has been recorded. We’ll reach out soon."
+              );
+
               form.reset();
             } catch {
               setIsError(true);
@@ -90,12 +104,24 @@ export function JoinForm() {
         >
           <label className="field">
             <span>Name</span>
-            <input type="text" name="name" autoComplete="name" required placeholder="Your full name" />
+            <input
+              type="text"
+              name="name"
+              autoComplete="name"
+              required
+              placeholder="Your full name"
+            />
           </label>
 
           <label className="field">
             <span>Email</span>
-            <input type="email" name="email" autoComplete="email" required placeholder="you@example.com" />
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              required
+              placeholder="you@example.com"
+            />
           </label>
 
           <label className="field">
@@ -105,20 +131,34 @@ export function JoinForm() {
               <option value="Membership">Membership</option>
               <option value="Volunteering">Volunteering</option>
               <option value="Sponsorship">Sponsorship</option>
-              <option value="Cultural collaboration">Cultural collaboration</option>
+              <option value="Cultural collaboration">
+                Cultural collaboration
+              </option>
             </select>
           </label>
 
           <label className="field">
-            <span>Message (optional)</span>
-            <textarea name="message" rows={3} placeholder="Tell us how you’d like to help" />
+            <span>Message optional</span>
+            <textarea
+              name="message"
+              rows={3}
+              placeholder="Tell us how you’d like to help"
+            />
           </label>
 
-          <button type="submit" className="btn btn-primary btn-block" disabled={pending}>
-            {pending ? "Sending…" : "Submit interest"}
+          <button
+            type="submit"
+            className="btn btn-primary btn-block"
+            disabled={pending}
+          >
+            {pending ? "Sending..." : "Submit interest"}
           </button>
 
-          <p className={`form-note${isError ? " form-note--error" : ""}`} role="status" aria-live="polite">
+          <p
+            className={`form-note${isError ? " form-note--error" : ""}`}
+            role="status"
+            aria-live="polite"
+          >
             {status}
           </p>
         </form>
