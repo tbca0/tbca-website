@@ -142,7 +142,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Form submitted successfully. Confirmation email sent.",
+      message: "Thank you for showing interest in Telangana Bengali Cultural Association.",
     });
   } catch (error) {
     console.error("Join form email error:", error);
