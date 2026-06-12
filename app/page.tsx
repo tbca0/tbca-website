@@ -213,6 +213,30 @@ export default function Home() {
         </section>
       </main>
 
+      <a
+  href="https://wa.me/919581102111?text=Hello%20TBCA%2C%20I%20want%20to%20know%20more%20about%20the%20association."
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Chat with TBCA on WhatsApp"
+  className="fixed bottom-6 right-6 z-[9999] inline-flex items-center gap-3 rounded-full bg-[#05b344] px-7 py-4 text-[20px] font-extrabold text-white shadow-2xl shadow-green-400/30 transition hover:-translate-y-1 hover:bg-[#04963a] focus:outline-none focus:ring-4 focus:ring-green-200"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    className="h-8 w-8 text-white"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M21 11.5a8.38 8.38 0 0 1-1.2 4.3 8.5 8.5 0 0 1-7.3 4.2 8.38 8.38 0 0 1-4.3-1.2L3 20l1.2-5.2A8.38 8.38 0 0 1 3 10.5a8.5 8.5 0 0 1 4.2-7.3 8.38 8.38 0 0 1 4.3-1.2h.5a8.48 8.48 0 0 1 8 8v1.5z" />
+  </svg>
+
+  <span className="text-white">WhatsApp</span>
+</a>
+
       <footer className="site-footer">
         <div className="container footer-grid">
           <div className="footer-brand">

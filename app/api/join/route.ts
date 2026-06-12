@@ -1,186 +1,132 @@
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
-const MAX = { name: 200, email: 320, interest: 100, message: 4000 };
+type JoinFormPayload = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  message?: string;
+  interest?: string;
+};
 
-function normalizeEnvUrl(value: string | undefined): string {
-  if (!value) return "";
-  return value
-    .trim()
-    .replace(/^["']|["']$/g, "")
-    .replace(/\r|\n/g, "");
-}
-
-function normalizeEnvSecret(value: string | undefined): string {
-  if (!value) return "";
-  let s = String(value);
-  s = s.replace(/^\uFEFF/, "").replace(/[\u200B-\u200D\uFEFF]/g, "");
-  s = s.replace(/\u00A0/g, " ");
-  s = s.trim().replace(/^["']|["']$/g, "").replace(/\r|\n/g, "");
-  return s;
-}
-
-function isDev() {
-  return process.env.NODE_ENV === "development";
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export async function POST(request: Request) {
-  const sheetUrl = normalizeEnvUrl(process.env.GOOGLE_SHEET_WEB_APP_URL);
-  if (!sheetUrl) {
-    return NextResponse.json(
-      { ok: false, error: "Form is not connected yet. Set GOOGLE_SHEET_WEB_APP_URL on the server." },
-      { status: 503 }
-    );
-  }
-
-  if (!sheetUrl.startsWith("https://script.google.com/")) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "GOOGLE_SHEET_WEB_APP_URL must be the HTTPS Web App URL from Apps Script → Deploy (starts with https://script.google.com/).",
-      },
-      { status: 503 }
-    );
-  }
-
-  let body: unknown;
   try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ ok: false, error: "Invalid JSON body." }, { status: 400 });
-  }
+    const body = (await request.json()) as JoinFormPayload;
 
-  if (!body || typeof body !== "object") {
-    return NextResponse.json({ ok: false, error: "Invalid payload." }, { status: 400 });
-  }
+    const name = body.name?.trim() || "";
+    const email = body.email?.trim() || "";
+    const phone = body.phone?.trim() || "";
+    const interest = body.interest?.trim() || "";
+    const message = body.message?.trim() || "";
 
-  const b = body as Record<string, unknown>;
-  const name = String(b.name ?? "").trim().slice(0, MAX.name);
-  const email = String(b.email ?? "").trim().slice(0, MAX.email);
-  const interest = String(b.interest ?? "").trim().slice(0, MAX.interest);
-  const message = String(b.message ?? "").trim().slice(0, MAX.message);
+    if (!name || !email || !phone) {
+      return NextResponse.json(
+        { success: false, message: "Name, email, and phone are required." },
+        { status: 400 }
+      );
+    }
 
-  if (!name || !email || !interest) {
-    return NextResponse.json(
-      { ok: false, error: "Name, email, and interest are required." },
-      { status: 400 }
-    );
-  }
+    if (!isValidEmail(email)) {
+      return NextResponse.json(
+        { success: false, message: "Please enter a valid email address." },
+        { status: 400 }
+      );
+    }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ ok: false, error: "Please enter a valid email address." }, { status: 400 });
-  }
-
-  const secret = normalizeEnvSecret(process.env.GOOGLE_SHEET_SECRET);
-
-  if (!secret) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "GOOGLE_SHEET_SECRET is missing or empty. Add it to .env.local (local) or Vercel → Environment Variables, using the same value as Script property SECRET in Google Apps Script. Restart npm run dev after changing .env.local.",
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
       },
-      { status: 503 }
-    );
-  }
-
-  const payload = {
-    name,
-    email,
-    interest,
-    message,
-    secret,
-  };
-
-  try {
-    const upstream = await fetch(sheetUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(payload),
-      redirect: "follow",
-      cache: "no-store",
     });
 
-    const text = await upstream.text();
-    let parsed: {
-      ok?: boolean;
-      error?: string;
-      wantLen?: number;
-      gotLen?: number;
-    } | null = null;
-    try {
-      parsed = JSON.parse(text) as {
-        ok?: boolean;
-        error?: string;
-        wantLen?: number;
-        gotLen?: number;
-      };
-    } catch {
-      parsed = null;
-    }
+    const userMailHtml = `
+      <div style="font-family: Arial, sans-serif; background:#f8fafc; padding:24px;">
+        <div style="max-width:620px; margin:auto; background:#ffffff; border-radius:18px; overflow:hidden; border:1px solid #e2e8f0;">
+          <div style="background:#fff7ed; padding:24px; text-align:center;">
+            <h1 style="margin:0; color:#9a3412; font-size:24px;">Thank you for joining TBCA</h1>
+            <p style="margin:8px 0 0; color:#475569;">Telangana Bengali Cultural Association</p>
+          </div>
 
-    if (!upstream.ok) {
-      const hint =
-        upstream.status === 401 || upstream.status === 403
-          ? " The Web App may be set to “Only myself”; change deployment to “Anyone” can access."
-          : "";
-      return NextResponse.json(
-        {
-          ok: false,
-          error: `Google returned HTTP ${upstream.status}.${hint}${
-            isDev()
-              ? ` Body (first 240 chars): ${text.slice(0, 240).replace(/\s+/g, " ")}`
-              : ""
-          }`,
-        },
-        { status: 502 }
-      );
-    }
+          <div style="padding:28px;">
+            <p style="font-size:16px; color:#0f172a;">Dear ${name},</p>
 
-    if (parsed === null || typeof parsed !== "object" || typeof parsed.ok !== "boolean") {
-      const looksLikeHtml = /<!DOCTYPE|<html[\s>]/i.test(text);
-      return NextResponse.json(
-        {
-          ok: false,
-          error: looksLikeHtml
-            ? "The Web App URL returned a web page instead of JSON. Copy the URL again from Apps Script → Deploy (Manage deployments) → copy Web app URL ending in /exec."
-            : `Expected JSON from Google Apps Script.${isDev() ? ` Got: ${text.slice(0, 280).replace(/\s+/g, " ")}` : ""}`,
-        },
-        { status: 502 }
-      );
-    }
+            <p style="font-size:15px; line-height:1.7; color:#334155;">
+              Thank you for showing interest in Telangana Bengali Cultural Association.
+              We have received your details successfully. Our team will contact you soon.
+            </p>
 
-    if (parsed.ok === false) {
-      let msg = parsed.error || "Sheet rejected the row.";
-      if (msg === "Unauthorized.") {
-        msg =
-          "Secret mismatch or missing. Set GOOGLE_SHEET_SECRET in .env.local to exactly match Script property SECRET (all caps name). Update Apps Script code from the repo if you still see this. Redeploy the Web app (New version). Restart npm run dev.";
-      }
-      if (typeof parsed.wantLen === "number" && typeof parsed.gotLen === "number") {
-        msg += ` Length in Google SECRET: ${parsed.wantLen}. Length from server: ${parsed.gotLen}. If they differ, one value has extra characters or the wrong secret is in .env.local.`;
-      }
-      return NextResponse.json({ ok: false, error: msg }, { status: 502 });
-    }
+            <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:14px; padding:16px; margin:22px 0;">
+              <p style="margin:0 0 8px; color:#9a3412; font-weight:bold;">Your submitted details</p>
+              <p style="margin:4px 0; color:#334155;"><strong>Name:</strong> ${name}</p>
+              <p style="margin:4px 0; color:#334155;"><strong>Email:</strong> ${email}</p>
+              <p style="margin:4px 0; color:#334155;"><strong>Phone:</strong> ${phone}</p>
+              ${interest ? `<p style="margin:4px 0; color:#334155;"><strong>Interest:</strong> ${interest}</p>` : ""}
+              ${message ? `<p style="margin:4px 0; color:#334155;"><strong>Message:</strong> ${message}</p>` : ""}
+            </div>
 
-    if (parsed.ok !== true) {
-      return NextResponse.json(
-        { ok: false, error: "Unexpected response from Google Apps Script." },
-        { status: 502 }
-      );
-    }
+            <p style="font-size:15px; line-height:1.7; color:#334155;">
+              Warm regards,<br />
+              <strong>TBCA Team</strong><br />
+              Telangana Bengali Cultural Association
+            </p>
+          </div>
 
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+          <div style="background:#0f172a; padding:18px; text-align:center;">
+            <p style="margin:0; color:#ffffff; font-size:13px;">
+              Connecting people through culture
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const adminMailHtml = `
+      <div style="font-family: Arial, sans-serif; padding:20px;">
+        <h2>New TBCA Join Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        ${interest ? `<p><strong>Interest:</strong> ${interest}</p>` : ""}
+        ${message ? `<p><strong>Message:</strong> ${message}</p>` : ""}
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: email,
+      subject: "Thank you for joining TBCA",
+      html: userMailHtml,
+    });
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
+      subject: "New TBCA Join Form Submission",
+      html: adminMailHtml,
+      replyTo: email,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Form submitted successfully. Confirmation email sent.",
+    });
+  } catch (error) {
+    console.error("Join form email error:", error);
+
     return NextResponse.json(
       {
-        ok: false,
-        error: `Could not reach Google Sheet (${message}). Check your network and Web App URL.`,
+        success: false,
+        message: "Form submitted, but email could not be sent.",
       },
-      { status: 502 }
+      { status: 500 }
     );
   }
 }
