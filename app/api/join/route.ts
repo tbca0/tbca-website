@@ -4,7 +4,6 @@ import nodemailer from "nodemailer";
 type JoinFormPayload = {
   name?: string;
   email?: string;
-  phone?: string;
   message?: string;
   interest?: string;
 };
@@ -13,19 +12,27 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as JoinFormPayload;
 
     const name = body.name?.trim() || "";
     const email = body.email?.trim() || "";
-    const phone = body.phone?.trim() || "";
     const interest = body.interest?.trim() || "";
     const message = body.message?.trim() || "";
 
-    if (!name || !email || !phone) {
+    if (!name || !email) {
       return NextResponse.json(
-        { success: false, message: "Name, email, and phone are required." },
+        { success: false, message: "Name and email are required." },
         { status: 400 }
       );
     }
@@ -37,10 +44,15 @@ export async function POST(request: Request) {
       );
     }
 
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeInterest = escapeHtml(interest);
+    const safeMessage = escapeHtml(message);
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT || 587),
-      secure: false,
+      secure: Number(process.env.SMTP_PORT) === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -56,7 +68,7 @@ export async function POST(request: Request) {
           </div>
 
           <div style="padding:28px;">
-            <p style="font-size:16px; color:#0f172a;">Dear ${name},</p>
+            <p style="font-size:16px; color:#0f172a;">Dear ${safeName},</p>
 
             <p style="font-size:15px; line-height:1.7; color:#334155;">
               Thank you for showing interest in Telangana Bengali Cultural Association.
@@ -65,11 +77,18 @@ export async function POST(request: Request) {
 
             <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:14px; padding:16px; margin:22px 0;">
               <p style="margin:0 0 8px; color:#9a3412; font-weight:bold;">Your submitted details</p>
-              <p style="margin:4px 0; color:#334155;"><strong>Name:</strong> ${name}</p>
-              <p style="margin:4px 0; color:#334155;"><strong>Email:</strong> ${email}</p>
-              <p style="margin:4px 0; color:#334155;"><strong>Phone:</strong> ${phone}</p>
-              ${interest ? `<p style="margin:4px 0; color:#334155;"><strong>Interest:</strong> ${interest}</p>` : ""}
-              ${message ? `<p style="margin:4px 0; color:#334155;"><strong>Message:</strong> ${message}</p>` : ""}
+              <p style="margin:4px 0; color:#334155;"><strong>Name:</strong> ${safeName}</p>
+              <p style="margin:4px 0; color:#334155;"><strong>Email:</strong> ${safeEmail}</p>
+              ${
+                safeInterest
+                  ? `<p style="margin:4px 0; color:#334155;"><strong>Interest:</strong> ${safeInterest}</p>`
+                  : ""
+              }
+              ${
+                safeMessage
+                  ? `<p style="margin:4px 0; color:#334155;"><strong>Message:</strong> ${safeMessage}</p>`
+                  : ""
+              }
             </div>
 
             <p style="font-size:15px; line-height:1.7; color:#334155;">
@@ -91,17 +110,24 @@ export async function POST(request: Request) {
     const adminMailHtml = `
       <div style="font-family: Arial, sans-serif; padding:20px;">
         <h2>New TBCA Join Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        ${interest ? `<p><strong>Interest:</strong> ${interest}</p>` : ""}
-        ${message ? `<p><strong>Message:</strong> ${message}</p>` : ""}
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
+        ${
+          safeInterest
+            ? `<p><strong>Interest:</strong> ${safeInterest}</p>`
+            : ""
+        }
+        ${
+          safeMessage
+            ? `<p><strong>Message:</strong> ${safeMessage}</p>`
+            : ""
+        }
       </div>
     `;
 
     await transporter.sendMail({
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
-      to: email,
+      to: safeEmail,
       subject: "Thank you for joining TBCA",
       html: userMailHtml,
     });
@@ -111,7 +137,7 @@ export async function POST(request: Request) {
       to: process.env.ADMIN_EMAIL || process.env.SMTP_USER,
       subject: "New TBCA Join Form Submission",
       html: adminMailHtml,
-      replyTo: email,
+      replyTo: safeEmail,
     });
 
     return NextResponse.json({
@@ -124,7 +150,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Form submitted, but email could not be sent.",
+        message: "Something went wrong. Please try again or email info@tbca.in.",
       },
       { status: 500 }
     );
