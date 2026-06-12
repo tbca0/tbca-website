@@ -21,6 +21,41 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#039;");
 }
 
+async function saveToGoogleSheet(payload: {
+  name: string;
+  email: string;
+  interest: string;
+  message: string;
+}) {
+  const url = process.env.GOOGLE_SHEET_WEB_APP_URL;
+  const secret = process.env.GOOGLE_SHEET_SECRET;
+
+  if (!url || !secret) {
+    console.warn("Google Sheet env variables are missing. Skipping sheet save.");
+    return;
+  }
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      secret,
+      ...payload,
+    }),
+  });
+
+  const text = await response.text();
+
+  if (!response.ok) {
+    console.error("Google Sheet save failed:", text);
+    throw new Error("Google Sheet save failed");
+  }
+
+  console.log("Google Sheet save response:", text);
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as JoinFormPayload;
@@ -44,15 +79,22 @@ export async function POST(request: Request) {
       );
     }
 
+    await saveToGoogleSheet({
+      name,
+      email,
+      interest,
+      message,
+    });
+
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
     const safeInterest = escapeHtml(interest);
     const safeMessage = escapeHtml(message);
 
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT || 587),
-      secure: Number(process.env.SMTP_PORT) === 465,
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT || 465),
+      secure: Number(process.env.SMTP_PORT || 465) === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -145,7 +187,7 @@ export async function POST(request: Request) {
       message: "Thank you for showing interest in Telangana Bengali Cultural Association.",
     });
   } catch (error) {
-    console.error("Join form email error:", error);
+    console.error("Join form error:", error);
 
     return NextResponse.json(
       {
